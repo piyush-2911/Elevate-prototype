@@ -22,10 +22,16 @@ def road_graph(seed):
 
 
 def route(g, source, target):
+    key=(source,target)
+    cache=g.graph.setdefault('routes',{})
+    if key in cache:
+        distance,path=cache[key]; return distance,list(path)
     live = nx.subgraph_view(g, filter_edge=lambda u,v: not g[u][v]['blocked'])
     try:
         path = nx.shortest_path(live, source, target, weight='time')
-        return sum(g[u][v]['time'] for u,v in zip(path,path[1:])), path
+        distance=sum(g[u][v]['time'] for u,v in zip(path,path[1:]))
+        cache[key]=(distance,list(path))
+        return distance, path
     except (nx.NetworkXNoPath, nx.NodeNotFound):
         return float('inf'), []
 

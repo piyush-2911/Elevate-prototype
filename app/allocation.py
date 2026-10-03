@@ -91,7 +91,7 @@ def move(w):
             if not a['edge_left']: a['node']=v; a['path'].pop(0)
         if a['node']==p['node'] and a['status']=='en-route':
             a['status']='transporting'; p['status']='transporting'
-        if a['node']==h['node'] and a['status']=='transporting' and h['forced'] not in ('offline','full'):
+        if p['assignment'] and a['node']==h['node'] and a['status']=='transporting' and h['forced'] not in ('offline','full'):
             h['used_icu' if p['icu'] else 'used_beds']+=1
             if p['severity']<=2: h['blood']-=1
             p.update(status='delivered',arrived=w.tick)
