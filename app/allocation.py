@@ -7,7 +7,7 @@ BIG=1e8
 
 def occupied(w,h,icu):
     return h['used_icu' if icu else 'used_beds']+sum(
-        p['status'] in ('assigned','transporting') and p['assignment'] and
+        p['status'] in ('assigned','transporting') and bool(p['assignment']) and
         p['assignment']['hospital']==h['id'] and p['icu']==icu for p in w.patients)
 
 def choices(w,a,p,smart):
@@ -17,7 +17,7 @@ def choices(w,a,p,smart):
     options=[]
     for h in w.hospitals:
         capacity=h['icu' if p['icu'] else 'beds']; load=occupied(w,h,p['icu'])
-        blood_reserved=sum(q['status'] in ('assigned','transporting') and q['assignment'] and q['assignment']['hospital']==h['id'] and q['severity']<=2 for q in w.patients)
+        blood_reserved=sum(q['status'] in ('assigned','transporting') and bool(q['assignment']) and q['assignment']['hospital']==h['id'] and q['severity']<=2 for q in w.patients)
         if h['forced'] in ('offline','full') or load>=capacity: continue
         if p['severity']<=2 and h['blood']<=blood_reserved: continue
         if p['need']!='general' and h['specialty']!=p['need']: continue
